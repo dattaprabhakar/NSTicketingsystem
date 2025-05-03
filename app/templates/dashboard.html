@@ -1,54 +1,18 @@
 {% extends "base.html" %}
 
 {% block content %}
-    {# Remove the default h1 and welcome message if they are handled by base or not desired #}
-    {# <h1 class="mb-4">Dashboard</h1> #}
-    {# <p>Welcome, {{ current_user.username }}!</p> #}
+    {# Optional: Add a main heading for the dashboard page itself if desired #}
+    {# <h1 class="h2 border-bottom pb-2 mb-3">Dashboard Overview</h1> #}
 
-    <div class="row mt-4">
+    {# Added dashboard-widget class to row for specific styling #}
+    <div class="row mt-4 dashboard-widget">
 
-        {# Widget 1: Open Tickets #}
-        <div class="col-lg-3 col-md-6 mb-4">
-            <div class="card text-center shadow-sm h-100"> {# Added shadow, h-100 #}
-                 <div class="card-body d-flex flex-column justify-content-center"> {# Center content #}
-                    <i class="bi bi-circle fs-1 text-muted mb-2"></i> {# Large grey icon #}
-                    <h6 class="card-title text-success fw-bold">Open ({{ stats.by_status['Open'] if stats and stats.by_status and 'Open' in stats.by_status else 0 }})</h6>
-                </div>
-            </div>
-        </div>
+        <div class="col-lg-3 col-md-6 mb-4"> <div class="card text-center h-100"><div class="card-body d-flex flex-column justify-content-center"><i class="bi bi-circle fs-1 text-muted mb-2"></i><h6 class="card-title text-success fw-bold">Open ({{ stats.by_status['Open'] if stats and stats.by_status and 'Open' in stats.by_status else 0 }})</h6></div></div></div>
+        <div class="col-lg-3 col-md-6 mb-4"> <div class="card text-center h-100"><div class="card-body d-flex flex-column justify-content-center"><i class="bi bi-circle fs-1 text-muted mb-2"></i><h6 class="card-title text-danger fw-bold">Closed ({{ stats.by_status['Closed'] if stats and stats.by_status and 'Closed' in stats.by_status else 0 }})</h6></div></div></div>
+        <div class="col-lg-3 col-md-6 mb-4"> <div class="card text-center h-100"><div class="card-body d-flex flex-column justify-content-center"><i class="bi bi-circle fs-1 text-muted mb-2"></i><h6 class="card-title text-warning fw-bold">Answered ({{ stats.by_status['In Progress'] if stats and stats.by_status and 'In Progress' in stats.by_status else 0 }})</h6></div></div></div>
+        <div class="col-lg-3 col-md-6 mb-4"> <div class="card text-center h-100"><div class="card-body d-flex flex-column justify-content-center"><i class="bi bi-circle fs-1 text-muted mb-2"></i><h6 class="card-title text-primary fw-bold">All Tickets ({{ stats.total_tickets if stats and 'total_tickets' in stats else 0 }})</h6></div></div></div>
 
-        {# Widget 2: Closed Tickets #}
-        <div class="col-lg-3 col-md-6 mb-4">
-            <div class="card text-center shadow-sm h-100">
-                 <div class="card-body d-flex flex-column justify-content-center">
-                     <i class="bi bi-circle fs-1 text-muted mb-2"></i>
-                     <h6 class="card-title text-danger fw-bold">Closed ({{ stats.by_status['Closed'] if stats and stats.by_status and 'Closed' in stats.by_status else 0 }})</h6>
-                 </div>
-            </div>
-        </div>
-
-         {# Widget 3: "Answered" (Using 'In Progress' from our data) #}
-        <div class="col-lg-3 col-md-6 mb-4">
-            <div class="card text-center shadow-sm h-100">
-                <div class="card-body d-flex flex-column justify-content-center">
-                    <i class="bi bi-circle fs-1 text-muted mb-2"></i>
-                    <h6 class="card-title text-warning fw-bold">Answered ({{ stats.by_status['In Progress'] if stats and stats.by_status and 'In Progress' in stats.by_status else 0 }})</h6> {# Using In Progress data #}
-                </div>
-            </div>
-        </div>
-
-        {# Widget 4: All Tickets #}
-        <div class="col-lg-3 col-md-6 mb-4">
-            <div class="card text-center shadow-sm h-100">
-                <div class="card-body d-flex flex-column justify-content-center">
-                    <i class="bi bi-circle fs-1 text-muted mb-2"></i>
-                    <h6 class="card-title text-primary fw-bold">All Tickets ({{ stats.total_tickets if stats and 'total_tickets' in stats else 0 }})</h6>
-                </div>
-            </div>
-        </div>
-
-    </div> {# End row #}
-
-    {# You might add other dashboard elements here later #}
+    </div>
+    {# Add other dashboard elements here if needed #}
 
 {% endblock content %}

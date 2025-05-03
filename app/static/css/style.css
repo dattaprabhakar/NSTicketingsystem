@@ -1,122 +1,133 @@
 /* app/static/css/style.css */
 
-/* --- Remove Background Image --- */
+/* --- Base Body --- */
 body {
     background-image: none; /* Override previous background image */
     background-color: #f8f9fa; /* Set a light background color */
-    min-height: 100vh;
-    /* Flex properties might not be needed if not using sticky footer */
-    /* display: flex; */
-    /* flex-direction: column; */
 }
 
-/* main.container { flex-grow: 1; } */ /* Remove if not using flex footer */
-
-/* --- Sidebar Styles (from Bootstrap examples) --- */
+/* --- Sidebar Styles (from Bootstrap examples, adjusted) --- */
 .sidebar {
   position: fixed;
-  top: 0;
-  /* rtl:raw:
-  right: 0;
-  */
+  top: 0; /* Start at top */
   bottom: 0;
-  /* rtl:remove */
   left: 0;
-  z-index: 100; /* Behind backdrop */
-  padding: 48px 0 0; /* Height of navbar */
+  z-index: 100; /* Behind backdrop on small screens */
+  padding: 110px 0 0; /* Approx height of BOTH sticky navbars */
   box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+  background-color: #f8f9fa; /* Match body or use #fff */
 }
 
 @media (max-width: 767.98px) {
   .sidebar {
-    top: 98px; /* Adjust based on your top bars height */
+    /* Adjust if needed for mobile toggle */
+     padding-top: 1rem; /* Less padding when stacked */
+     position: relative; /* Stack normally on small screens */
+     box-shadow: none;
+     height: auto; /* Allow natural height */
   }
+  main {
+      padding-top: 1rem !important; /* Reduce top padding on mobile */
+  }
+  /* Ensure navbars don't overlap content too much on mobile */
+  .sticky-top {
+      position: relative; /* Disable sticky on mobile if it causes issues */
+  }
+
 }
 
-.sidebar-sticky {
-  position: relative;
-  top: 0;
-  height: calc(100vh - 98px); /* Adjust based on your top bars height */
+.sidebar-sticky { /* Use this class on the inner div if needed for scrolling */
+  /* position: relative; */ /* Not needed if sidebar itself is fixed */
+  /* top: 0; */
+  height: calc(100vh - 110px); /* Adjust height calc based on navbars */
   padding-top: .5rem;
   overflow-x: hidden;
-  overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+  overflow-y: auto; /* Scrollable contents */
 }
 
 .sidebar .nav-link {
   font-weight: 500;
   color: #333;
-  padding: .75rem 1rem; /* Adjust padding */
+  padding: .65rem 1rem; /* Adjusted padding */
+  display: flex; /* Align icon and text */
+  align-items: center;
 }
 
 .sidebar .nav-link .bi { /* Icon styling */
-  margin-right: 4px;
+  margin-right: 8px; /* Increased spacing */
   color: #727272;
-  width: 16px;
-  height: 16px;
-  vertical-align: text-bottom;
+  width: 18px; /* Slightly larger icons */
+  height: 18px;
+  vertical-align: text-bottom; /* Helps alignment */
+  flex-shrink: 0; /* Prevent icon from shrinking */
 }
 
 .sidebar .nav-link.active {
-  color: #2470dc; /* Or your primary color */
+  color: #0d6efd; /* Bootstrap primary blue */
+  background-color: #e9ecef; /* Light grey active background */
 }
-
-.sidebar .nav-link:hover,
-.sidebar .nav-link.active {
-  background-color: #e9ecef; /* Light grey hover/active */
+.sidebar .nav-link:hover {
+  color: #0a58ca; /* Darker blue on hover */
+  background-color: #eef; /* Slightly different hover */
 }
-
 
 .sidebar-heading {
-  font-size: .75rem;
+  font-size: .8rem; /* Slightly larger heading */
+  font-weight: bold;
   text-transform: uppercase;
+  color: #6c757d;
 }
 
-
-/* Adjust main content padding to account for sidebar */
-/* You might need to adjust this based on final layout */
+/* Adjust main content padding */
 main {
-  padding-top: 1rem;
+  padding-top: 120px; /* Match sidebar padding */
+  padding-bottom: 2rem; /* Ensure space before footer */
 }
 
-/* Style for the widget icons */
-.card .bi-circle {
-    font-size: 4rem; /* Make icons larger */
-    opacity: 0.6; /* Make them slightly transparent */
+
+/* --- Dashboard Widget Styles --- */
+.dashboard-widget .card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); /* Softer shadow */
 }
+.dashboard-widget .card-body {
+     padding: 1.5rem; /* More padding */
+}
+.dashboard-widget .card i.bi { /* Target icons inside widgets */
+    font-size: 3.5rem; /* Icon size */
+    opacity: 0.7;
+    margin-bottom: 0.5rem;
+}
+/* Specific text colors for widget titles */
+.dashboard-widget .card-title.text-success { color: #198754 !important; }
+.dashboard-widget .card-title.text-danger { color: #dc3545 !important; }
+.dashboard-widget .card-title.text-warning { color: #ffc107 !important; }
+.dashboard-widget .card-title.text-primary { color: #0d6efd !important; }
 
-/* Override default blue link color for specific widget text */
-.card-title.text-success { color: #198754 !important; }
-.card-title.text-danger { color: #dc3545 !important; }
-.card-title.text-warning { color: #ffc107 !important; }
-.card-title.text-primary { color: #0d6efd !important; }
 
-
-/* Optional: Style the top header bar further */
+/* --- Header/Nav Styles --- */
 header {
-    /* Add any specific styles for the top bar */
+    height: 50px; /* Example fixed height */
+    line-height: 50px; /* Vertically center text if needed */
+    padding-top: 0; /* Override bootstrap padding */
+    padding-bottom: 0;
+    z-index: 1030; /* Ensure it's above sidebar */
 }
-
-/* Adjust horizontal nav */
 nav.bg-primary {
-    border-radius: 0; /* Remove rounding if needed */
+    top: 50px; /* Position below header */
+    z-index: 1029; /* Below header, above sidebar */
+    border-radius: 0;
 }
 nav.bg-primary .nav-link {
     color: rgba(255,255,255,.85);
-    padding: 0.5rem 1rem; /* Adjust padding */
-    margin-right: 0.25rem; /* Spacing between buttons */
-    border-radius: 0.25rem; /* Slight rounding on buttons */
+    padding: 0.5rem 1rem;
+    margin-right: 0.25rem;
+    border-radius: 0.25rem;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
 }
-nav.bg-primary .nav-link:hover {
-     color: #fff;
-     background-color: rgba(255, 255, 255, 0.1);
-}
-nav.bg-primary .nav-link.active {
-    color: #fff;
-    background-color: rgba(0, 0, 0, 0.2); /* Darker active state */
-    font-weight: bold;
-}
+nav.bg-primary .nav-link:hover { color: #fff; background-color: rgba(255, 255, 255, 0.1); }
+nav.bg-primary .nav-link.active { color: #fff; background-color: rgba(0, 0, 0, 0.2); font-weight: bold; }
 
-/* Footer adjustment if needed */
+/* --- Footer --- */
 footer {
-   /*background-color: #e9ecef !important;*/ /* Match body bg? */
+   background-color: #e9ecef !important; /* Match body bg? Or keep light */
 }
