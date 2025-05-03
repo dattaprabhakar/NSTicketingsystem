@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Dashboard</h1>
+    <p>Welcome, {{ current_user.username }}!</p>
+
+    <div class="row mt-4">
+        <!-- Total Tickets Widget -->
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title">Total Tickets</h5>
+                    <p class="card-text display-4">{{ stats.total_tickets }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tickets by Status Widget -->
+        <div class="col-md-6 mb-3">
+            <div class="card">
+                <div class="card-header">Tickets by Status</div>
+                <ul class="list-group list-group-flush">
+                    {% for status, count in stats.by_status.items() %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ status }}
+                        <span class="badge bg-info rounded-pill">{{ count }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- High Priority Tickets Widget -->
+        <div class="col-md-3 mb-3">
+             <div class="card text-white bg-danger">
+                <div class="card-body">
+                    <h5 class="card-title">High/Critical Priority</h5>
+                    <p class="card-text display-4">{{ stats.high_priority }}</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Placeholder for Charts (Optional Later) -->
+    <!-- <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">Ticket Trends (Chart Placeholder)</div>
+                <div class="card-body">
+                    <p>Charts coming soon...</p>
+                    <canvas id="ticketChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div> -->
+
+    <!-- Maybe add a list of recently updated tickets or assigned tickets here -->
+
+{% endblock %}

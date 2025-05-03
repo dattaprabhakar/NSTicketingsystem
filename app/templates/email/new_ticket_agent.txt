@@ -1,0 +1,12 @@
+Hi Agent,
+
+A new ticket has been submitted by user '{{ creator }}':
+
+Ticket ID: #{{ ticket_id }}
+Title: {{ title }}
+
+Please review and assign/handle the ticket:
+{{ url_for('tickets.view_ticket', ticket_id=ticket_id, _external=True) }}
+
+Thanks,
+Help Desk System

@@ -1,0 +1,14 @@
+Hi {{ current_user.username }},
+
+Your ticket has been successfully created with the following details:
+
+Ticket ID: #{{ ticket_id }}
+Title: {{ title }}
+
+You can view your ticket details here:
+{{ url_for('tickets.view_ticket', ticket_id=ticket_id, _external=True) }}
+
+Our support team will review it shortly.
+
+Thanks,
+The Help Desk Team
