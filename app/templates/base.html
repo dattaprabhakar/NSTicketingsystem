@@ -37,9 +37,6 @@
                                 {{ current_user.username }} ({{ current_user.role }})
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown"> <!-- Added dropdown-menu-end -->
-                                <!-- Add profile link later if needed -->
-                                <!-- <li><a class="dropdown-item" href="#">Profile</a></li> -->
-                                <!-- <li><hr class="dropdown-divider"></li> -->
                                 <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">Logout</a></li>
                             </ul>
                         </li>
@@ -71,12 +68,18 @@
             {% endif %}
         {% endwith %}
 
-        {% block content %}{% endblock %}
+        {# --- THIS IS THE CRUCIAL BLOCK FOR CONTENT --- #}
+        {% block content %}
+        <!-- Fallback content if child template doesn't define the block -->
+        <p class="text-danger">Error: Content block not defined in child template.</p>
+        {% endblock content %}
+        {# --- END OF CRUCIAL BLOCK --- #}
+
     </main>
 
     <footer class="mt-5 py-3 text-center text-muted bg-light"> <!-- Added padding -->
         <div class="container">
-             <p class="mb-0">© {% if now %}{{ now().year }}{% else %}{{ current_year }}{% endif %} Lightweight Help Desk</p> <!-- Used now() from context -->
+             <p class="mb-0">© {% if now %}{{ now().year }}{% else %}{{ '?' }}{% endif %} Lightweight Help Desk</p> <!-- Used now() from context -->
         </div>
     </footer>
 
