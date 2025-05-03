@@ -1,0 +1,56 @@
+/* app/static/css/style.css */
+
+body {
+    /* --- Background Image Settings --- */
+    /* *** IMPORTANT: Replace 'background.jpg' with the actual filename of YOUR image *** */
+    background-image: url('../img/background.jpg'); /* Path relative to the CSS file */
+
+    /* How the image should behave: */
+    background-size: cover;          /* Scale the image nicely to cover the whole page */
+    background-repeat: no-repeat;    /* Don't tile the image */
+    background-position: center center; /* Center the image */
+    background-attachment: fixed;     /* Keep the background fixed while scrolling (alternative: 'scroll') */
+
+    /* --- Fallback Color --- */
+    /* Shown while the image loads or if it fails */
+    background-color: #e9ecef; /* A light fallback grey */
+
+    /* --- Ensure Content Readability --- */
+    /* If your background is DARK, you might need to uncomment this: */
+    /* color: #f8f9fa; */
+
+    /* --- Existing styles --- */
+    padding-bottom: 60px; /* Prevent footer overlap */
+    min-height: 100vh; /* Ensure body takes at least full viewport height */
+    display: flex; /* Use flexbox to help footer stick to bottom */
+    flex-direction: column; /* Stack elements vertically */
+}
+
+/* Make the main content area grow to push the footer down */
+main.container {
+    flex-grow: 1;
+}
+
+
+/* --- Optional: Improve Readability on Cards --- */
+/* If text is hard to read over your background, add a
+   semi-transparent background to content cards */
+.card {
+     background-color: rgba(255, 255, 255, 0.90); /* White with 90% opacity */
+     /* For dark themes: */
+     /* background-color: rgba(33, 37, 41, 0.85); */ /* Dark with 85% opacity */
+}
+
+
+/* You might need to adjust navbar/footer backgrounds too if needed */
+/* Example: Make navbar slightly transparent */
+/*
+.navbar {
+    background-color: rgba(33, 37, 41, 0.9) !important; // Dark with 90% opacity
+}
+*/
+/*
+.footer {
+     background-color: rgba(248, 249, 250, 0.9) !important; // Light with 90% opacity
+}
+*/
