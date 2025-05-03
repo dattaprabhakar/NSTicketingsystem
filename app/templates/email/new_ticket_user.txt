@@ -1,4 +1,4 @@
-Hi {{ current_user.username }},
+Hi {{ username }},
 
 Your ticket has been successfully created with the following details:
 

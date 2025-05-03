@@ -1,7 +1,7 @@
 # app/routes/auth.py
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
-from app.forms import LoginForm # Add RegistrationForm if needed
+from app.forms import LoginForm # Import RegistrationForm if you uncomment the route
 from app.models import User
 from app.extensions import mongo, bcrypt
 
@@ -58,33 +58,30 @@ def logout():
 @auth_bp.route('/setup_initial_user')
 def setup_initial_user():
     # WARNING: In a real app, protect this route or use a CLI command!
-    #          This is just for easy setup during development.
-    username = "agent1"
-    email = "agent1@example.com"
-    password = "password" # Use a strong password!
-    role = "agent"
+    #          This is just for easy setup during development. REMOVE OR SECURE LATER.
+    users_to_create = [
+        {"username": "agent1", "email": "agent1@example.com", "password": "password", "role": "agent"},
+        {"username": "user1", "email": "user1@example.com", "password": "password", "role": "user"}
+    ]
+    created_count = 0
+    existing_count = 0
 
-    if not User.find_by_username(username):
-        try:
-            User.create(username, email, password, role)
-            flash(f'Initial user "{username}" ({role}) created.', 'info')
-        except Exception as e:
-             flash(f'Error creating initial user: {e}', 'danger')
-    else:
-        flash(f'User "{username}" already exists.', 'warning')
+    for user_details in users_to_create:
+        if not User.find_by_username(user_details["username"]):
+            try:
+                User.create(user_details["username"], user_details["email"], user_details["password"], user_details["role"])
+                flash(f'Initial user "{user_details["username"]}" ({user_details["role"]}) created.', 'info')
+                created_count += 1
+            except Exception as e:
+                 flash(f'Error creating initial user {user_details["username"]}: {e}', 'danger')
+        else:
+            flash(f'User "{user_details["username"]}" already exists.', 'warning')
+            existing_count += 1
 
-    username = "user1"
-    email = "user1@example.com"
-    password = "password" # Use a strong password!
-    role = "user"
+    if created_count == 0 and existing_count > 0:
+         flash('All initial users already exist.', 'info')
+    elif created_count == 0 and existing_count == 0:
+         flash('No initial users were specified or an error occurred.', 'warning')
 
-    if not User.find_by_username(username):
-        try:
-            User.create(username, email, password, role)
-            flash(f'Initial user "{username}" ({role}) created.', 'info')
-        except Exception as e:
-             flash(f'Error creating initial user: {e}', 'danger')
-    else:
-        flash(f'User "{username}" already exists.', 'warning')
 
     return redirect(url_for('auth.login'))

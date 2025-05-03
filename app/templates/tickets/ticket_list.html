@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1>{{ title }}</h1>
+        <a href="{{ url_for('tickets.create_ticket') }}" class="btn btn-success">Create New Ticket</a>
+    </div>
+    <hr>
+
+    {% if tickets %}
+    <div class="table-responsive">
+        <table class="table table-hover table-striped"> <!-- Added striped -->
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Priority</th>
+                    <th scope="col">Created By</th>
+                    {% if current_user.role == 'agent' %}
+                    <th scope="col">Assigned To</th>
+                    {% endif %}
+                    <th scope="col">Created At</th>
+                    <th scope="col">Updated At</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ticket in tickets %}
+                <tr>
+                    <td><a href="{{ url_for('tickets.view_ticket', ticket_id=ticket._id) }}">#{{ ticket._id|string|truncate(8, True, '') }}</a></td> <!-- Shorten ID display -->
+                    <td>{{ ticket.title|truncate(50) }}</td>
+                    <td>
+                         <span class="badge
+                            {% if ticket.status == 'Open' %}bg-success
+                            {% elif ticket.status == 'In Progress' %}bg-warning text-dark
+                            {% elif ticket.status == 'Resolved' %}bg-info text-dark
+                            {% elif ticket.status == 'Closed' %}bg-secondary
+                            {% else %}bg-light text-dark{% endif %}">
+                            {{ ticket.status }}
+                        </span>
+                    </td>
+                     <td>
+                        <span class="badge
+                            {% if ticket.priority == 'Critical' %}bg-danger
+                            {% elif ticket.priority == 'High' %}bg-warning text-dark
+                            {% elif ticket.priority == 'Medium' %}bg-info text-dark
+                            {% else %}bg-secondary{% endif %}">
+                            {{ ticket.priority }}
+                        </span>
+                    </td>
+                    <td>{{ ticket.creator_username }}</td>
+                     {% if current_user.role == 'agent' %}
+                     <td>{{ ticket.assignee_username }}</td>
+                     {% endif %}
+                    <td>{{ ticket.created_at.strftime('%Y-%m-%d %H:%M') if ticket.created_at else 'N/A' }}</td>
+                     <td>{{ ticket.updated_at.strftime('%Y-%m-%d %H:%M') if ticket.updated_at else 'N/A' }}</td>
+                    <td>
+                        <a href="{{ url_for('tickets.view_ticket', ticket_id=ticket._id) }}" class="btn btn-sm btn-primary">View</a>
+                        <!-- Add Edit/Delete buttons later if needed -->
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            You have no tickets{% if current_user.role != 'agent' %} yet{% endif %}. <a href="{{ url_for('tickets.create_ticket') }}" class="alert-link">Create one now!</a>
+        </div>
+    {% endif %}
+{% endblock %}
