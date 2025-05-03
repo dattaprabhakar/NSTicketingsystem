@@ -1,7 +1,8 @@
 # app/routes/auth.py
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app # Added current_app
 from flask_login import login_user, logout_user, login_required, current_user
-from app.forms import LoginForm # Import RegistrationForm if you uncomment the route
+# *** UNCOMMENTED RegistrationForm import ***
+from app.forms import LoginForm, RegistrationForm
 from app.models import User
 from app.extensions import mongo, bcrypt
 
@@ -26,7 +27,8 @@ def login():
                 flash('Login Unsuccessful. Please check username and password', 'danger')
         else:
             flash('Login Unsuccessful. Please check username and password', 'danger')
-    return render_template('auth/login.html', title='Login', form=form)
+    # Pass config to template if needed (e.g., for showing setup link)
+    return render_template('auth/login.html', title='Login', form=form, config=current_app.config)
 
 @auth_bp.route('/logout')
 @login_required
@@ -36,23 +38,25 @@ def logout():
     return redirect(url_for('auth.login'))
 
 # --- Optional: Add Registration Route ---
-# from app.forms import RegistrationForm
-# @auth_bp.route('/register', methods=['GET', 'POST'])
-# def register():
-#     if current_user.is_authenticated:
-#         return redirect(url_for('main.dashboard'))
-#     form = RegistrationForm()
-#     if form.validate_on_submit():
-#         try:
-#             # Default role is 'user', can change if needed
-#             User.create(form.username.data, form.email.data, form.password.data, role='user')
-#             flash('Your account has been created! You are now able to log in', 'success')
-#             # Log the user in automatically after registration or redirect to login
-#             return redirect(url_for('auth.login'))
-#         except Exception as e:
-#             flash(f'An error occurred during registration: {e}', 'danger')
-#             # Log the error properly in a real app
-#     return render_template('auth/register.html', title='Register', form=form)
+# *** UNCOMMENTED Registration Route ***
+@auth_bp.route('/register', methods=['GET', 'POST'])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.dashboard'))
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        try:
+            # Default role is 'user', can change if needed
+            User.create(form.username.data, form.email.data, form.password.data, role='user')
+            flash('Your account has been created! You are now able to log in', 'success')
+            # Redirect to login after registration
+            return redirect(url_for('auth.login'))
+        except Exception as e:
+            flash(f'An error occurred during registration: {e}', 'danger')
+            current_app.logger.error(f"Error during registration: {e}")
+            # Log the error properly in a real app
+    return render_template('auth/register.html', title='Register', form=form)
+
 
 # --- Create a default admin/agent user (run once manually or via a CLI command) ---
 @auth_bp.route('/setup_initial_user')
@@ -74,6 +78,7 @@ def setup_initial_user():
                 created_count += 1
             except Exception as e:
                  flash(f'Error creating initial user {user_details["username"]}: {e}', 'danger')
+                 current_app.logger.error(f'Error creating initial user {user_details["username"]}: {e}')
         else:
             flash(f'User "{user_details["username"]}" already exists.', 'warning')
             existing_count += 1
