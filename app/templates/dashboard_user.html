@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1 class="h2 border-bottom pb-2 mb-3">My Dashboard</h1>
+    <p>Welcome, {{ current_user.username }}!</p>
+    <div class="row mt-4 dashboard-widget justify-content-center">
+        <div class="col-lg-4 col-md-6 mb-4"><div class="card text-center shadow-sm h-100"><div class="card-body d-flex flex-column justify-content-center"><i class="bi bi-ticket-detailed fs-1 text-muted mb-2"></i><h6 class="card-title text-success fw text-muted mb-2"></i><h6 class="card-title text-danger fw-bold">Closed ({{ stats.by_status['Closed'] | default(0) }})</h6></div></div></div>
+        <div class="col-xl col-lg-4 col-md-6 mb-4"><div class="card text-center shadow-sm h-100"><div class="card-body d-flex flex-column justify-content-center"><i class="bi bi-circle fs-1 text-muted mb-2"></i><h6 class="card-title text-primary fw-bold">All Tickets ({{ stats.total_tickets | default(0) }})</h6></div></div></div>
+    </div>
+    <div class="mt-4"><a href="{{ url_for('admin.view_users') }}" class="btn btn-secondary">Manage Users</a> <a href="{{ url_for('tickets.list_tickets') }}" class="btn btn-secondary">View All Tickets</a></div>
+{% endblock content %}
