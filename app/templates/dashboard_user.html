@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
-    <h1 class="h2 border-bottom pb-2 mb-3">{{ title }}</h1>
+    <h1 class="h2 border-bottom pb-2 mb-3">{{ title }}</h1> {# Use title passed from route #}
     <p>Welcome, {{ current_user.username }}!</p>
     <div class="row mt-4 dashboard-widget justify-content-center">
+        {# Widget 1: My Open Tickets #}
         <div class="col-lg-4 col-md-6 mb-4">
             <div class="card text-center shadow-sm h-100">
                 <div class="card-body d-flex flex-column justify-content-center">
@@ -12,6 +13,7 @@
                 </div>
             </div>
         </div>
+        {# Widget 2: My Total Tickets #}
         <div class="col-lg-4 col-md-6 mb-4">
             <div class="card text-center shadow-sm h-100">
                  <div class="card-body d-flex flex-column justify-content-center">
@@ -21,7 +23,8 @@
                  </div>
             </div>
         </div>
-         <div class="col-lg-4 col-md-6 mb-4">
+         {# Widget 3: Shortcut to Create Ticket #}
+        <div class="col-lg-4 col-md-6 mb-4">
             <div class="card text-center shadow-sm h-100">
                  <div class="card-body d-flex flex-column justify-content-center align-items-center">
                     <i class="bi bi-plus-square-dotted fs-1 text-muted mb-2"></i>
@@ -30,5 +33,5 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> {# End row #}
 {% endblock content %}
