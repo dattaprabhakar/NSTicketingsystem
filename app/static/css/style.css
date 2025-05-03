@@ -1,56 +1,122 @@
 /* app/static/css/style.css */
 
+/* --- Remove Background Image --- */
 body {
-    /* --- Background Image Settings --- */
-    /* *** IMPORTANT: Replace 'background.jpg' with the actual filename of YOUR image *** */
-    background-image: url('../img/background.jpg'); /* Path relative to the CSS file */
-
-    /* How the image should behave: */
-    background-size: cover;          /* Scale the image nicely to cover the whole page */
-    background-repeat: no-repeat;    /* Don't tile the image */
-    background-position: center center; /* Center the image */
-    background-attachment: fixed;     /* Keep the background fixed while scrolling (alternative: 'scroll') */
-
-    /* --- Fallback Color --- */
-    /* Shown while the image loads or if it fails */
-    background-color: #e9ecef; /* A light fallback grey */
-
-    /* --- Ensure Content Readability --- */
-    /* If your background is DARK, you might need to uncomment this: */
-    /* color: #f8f9fa; */
-
-    /* --- Existing styles --- */
-    padding-bottom: 60px; /* Prevent footer overlap */
-    min-height: 100vh; /* Ensure body takes at least full viewport height */
-    display: flex; /* Use flexbox to help footer stick to bottom */
-    flex-direction: column; /* Stack elements vertically */
+    background-image: none; /* Override previous background image */
+    background-color: #f8f9fa; /* Set a light background color */
+    min-height: 100vh;
+    /* Flex properties might not be needed if not using sticky footer */
+    /* display: flex; */
+    /* flex-direction: column; */
 }
 
-/* Make the main content area grow to push the footer down */
-main.container {
-    flex-grow: 1;
+/* main.container { flex-grow: 1; } */ /* Remove if not using flex footer */
+
+/* --- Sidebar Styles (from Bootstrap examples) --- */
+.sidebar {
+  position: fixed;
+  top: 0;
+  /* rtl:raw:
+  right: 0;
+  */
+  bottom: 0;
+  /* rtl:remove */
+  left: 0;
+  z-index: 100; /* Behind backdrop */
+  padding: 48px 0 0; /* Height of navbar */
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+}
+
+@media (max-width: 767.98px) {
+  .sidebar {
+    top: 98px; /* Adjust based on your top bars height */
+  }
+}
+
+.sidebar-sticky {
+  position: relative;
+  top: 0;
+  height: calc(100vh - 98px); /* Adjust based on your top bars height */
+  padding-top: .5rem;
+  overflow-x: hidden;
+  overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+}
+
+.sidebar .nav-link {
+  font-weight: 500;
+  color: #333;
+  padding: .75rem 1rem; /* Adjust padding */
+}
+
+.sidebar .nav-link .bi { /* Icon styling */
+  margin-right: 4px;
+  color: #727272;
+  width: 16px;
+  height: 16px;
+  vertical-align: text-bottom;
+}
+
+.sidebar .nav-link.active {
+  color: #2470dc; /* Or your primary color */
+}
+
+.sidebar .nav-link:hover,
+.sidebar .nav-link.active {
+  background-color: #e9ecef; /* Light grey hover/active */
 }
 
 
-/* --- Optional: Improve Readability on Cards --- */
-/* If text is hard to read over your background, add a
-   semi-transparent background to content cards */
-.card {
-     background-color: rgba(255, 255, 255, 0.90); /* White with 90% opacity */
-     /* For dark themes: */
-     /* background-color: rgba(33, 37, 41, 0.85); */ /* Dark with 85% opacity */
+.sidebar-heading {
+  font-size: .75rem;
+  text-transform: uppercase;
 }
 
 
-/* You might need to adjust navbar/footer backgrounds too if needed */
-/* Example: Make navbar slightly transparent */
-/*
-.navbar {
-    background-color: rgba(33, 37, 41, 0.9) !important; // Dark with 90% opacity
+/* Adjust main content padding to account for sidebar */
+/* You might need to adjust this based on final layout */
+main {
+  padding-top: 1rem;
 }
-*/
-/*
-.footer {
-     background-color: rgba(248, 249, 250, 0.9) !important; // Light with 90% opacity
+
+/* Style for the widget icons */
+.card .bi-circle {
+    font-size: 4rem; /* Make icons larger */
+    opacity: 0.6; /* Make them slightly transparent */
 }
-*/
+
+/* Override default blue link color for specific widget text */
+.card-title.text-success { color: #198754 !important; }
+.card-title.text-danger { color: #dc3545 !important; }
+.card-title.text-warning { color: #ffc107 !important; }
+.card-title.text-primary { color: #0d6efd !important; }
+
+
+/* Optional: Style the top header bar further */
+header {
+    /* Add any specific styles for the top bar */
+}
+
+/* Adjust horizontal nav */
+nav.bg-primary {
+    border-radius: 0; /* Remove rounding if needed */
+}
+nav.bg-primary .nav-link {
+    color: rgba(255,255,255,.85);
+    padding: 0.5rem 1rem; /* Adjust padding */
+    margin-right: 0.25rem; /* Spacing between buttons */
+    border-radius: 0.25rem; /* Slight rounding on buttons */
+}
+nav.bg-primary .nav-link:hover {
+     color: #fff;
+     background-color: rgba(255, 255, 255, 0.1);
+}
+nav.bg-primary .nav-link.active {
+    color: #fff;
+    background-color: rgba(0, 0, 0, 0.2); /* Darker active state */
+    font-weight: bold;
+}
+
+/* Footer adjustment if needed */
+footer {
+   /*background-color: #e9ecef !important;*/ /* Match body bg? */
+}

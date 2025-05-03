@@ -12,38 +12,130 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-        <div class="container">
-            <a class="navbar-brand" href="{{ url_for('main.index') }}">Help Desk</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+    {# --- Top Header Area (Mimics WordPress Admin Bar) --- #}
+    <header class="bg-dark text-white p-2 d-flex justify-content-between align-items-center">
+        <div>
+             {# Placeholder for potential site icon/name if needed #}
+             <i class="bi bi-headset fs-4 me-2"></i> {# Example icon #}
+             <span class="fs-5 fw-bold">HELP DESK</span> {# Changed title #}
+        </div>
+        <div>
+            {% if current_user.is_authenticated %}
+                <span class="me-3">Howdy, {{ current_user.username }}</span>
+                {# Add other admin bar links if needed #}
+            {% endif %}
+        </div>
+    </header>
+
+    {# --- Blue Horizontal Navigation Bar --- #}
+    <nav class="navbar navbar-expand-sm navbar-dark bg-primary mb-4 p-2"> {# Changed color, padding #}
+        <div class="container-fluid"> {# Use fluid container for full width #}
+             {# No brand needed here usually #}
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainHorizontalNav" aria-controls="mainHorizontalNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainHorizontalNav">
+                <ul class="navbar-nav me-auto mb-2 mb-sm-0">
                      {% if current_user.is_authenticated %}
-                     <li class="nav-item"><a class="nav-link {% if request.endpoint == 'main.dashboard' %}active{% endif %}" href="{{ url_for('main.dashboard') }}">Dashboard</a></li>
-                     <li class="nav-item"><a class="nav-link {% if request.endpoint.startswith('tickets.') and request.endpoint != 'tickets.create_ticket' %}active{% endif %}" href="{{ url_for('tickets.list_tickets') }}">Tickets</a></li>
-                     <li class="nav-item"><a class="nav-link {% if request.endpoint == 'tickets.create_ticket' %}active{% endif %}" href="{{ url_for('tickets.create_ticket') }}">New Ticket</a></li>
-                     {% if current_user.role == 'agent' %}<li class="nav-item"><a class="nav-link {% if request.endpoint.startswith('admin.') %}active{% endif %}" href="{{ url_for('admin.view_users') }}">Users</a></li>{% endif %}
+                     <li class="nav-item">
+                        <a class="nav-link btn btn-primary {% if request.endpoint == 'main.dashboard' %}active{% endif %}" href="{{ url_for('main.dashboard') }}">Dashboard</a>
+                    </li>
+                     <li class="nav-item">
+                        <a class="nav-link btn btn-primary {% if request.endpoint == 'tickets.create_ticket' %}active{% endif %}" href="{{ url_for('tickets.create_ticket') }}">Submit Ticket</a>
+                    </li>
+                     <li class="nav-item">
+                        <a class="nav-link btn btn-primary {% if request.endpoint.startswith('tickets.') and request.endpoint != 'tickets.create_ticket' %}active{% endif %}" href="{{ url_for('tickets.list_tickets') }}">My Tickets</a>
+                    </li>
+                     {# Add Ticket Status link if you create that page #}
+                     {% if current_user.role == 'agent' %}
+                     <li class="nav-item">
+                        <a class="nav-link btn btn-primary {% if request.endpoint.startswith('admin.') %}active{% endif %}" href="{{ url_for('admin.view_users') }}">User Data</a>
+                     </li>
+                     {% endif %}
                      {% endif %}
                 </ul>
-                 <ul class="navbar-nav ms-auto">
-                    {% if current_user.is_authenticated %}
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"> {{ current_user.username }} ({{ current_user.role }}) </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown"><li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">Logout</a></li></ul>
-                        </li>
-                    {% else %}
-                        <li class="nav-item"><a class="nav-link {% if request.endpoint == 'auth.login' %}active{% endif %}" href="{{ url_for('auth.login') }}">Login</a></li>
-                        <li class="nav-item"><a class="nav-link {% if request.endpoint == 'auth.register' %}active{% endif %}" href="{{ url_for('auth.register') }}">Register</a></li>
-                    {% endif %}
+                <ul class="navbar-nav ms-auto">
+                     {% if current_user.is_authenticated %}
+                        <li class="nav-item">
+                             <a class="nav-link btn btn-primary" href="{{ url_for('auth.logout') }}">Log out</a>
+                         </li>
+                     {% else %}
+                         {# Show login/register only if not authenticated - might not fit this theme #}
+                         <li class="nav-item"><a class="nav-link btn btn-primary" href="{{ url_for('auth.login') }}">Login</a></li>
+                     {% endif %}
                 </ul>
             </div>
         </div>
     </nav>
-    <main class="container mt-4">
-        {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}{% for c, m in messages %}<div class="alert alert-{{ c }} alert-dismissible fade show" role="alert">{{ m }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>{% endfor %}{% endif %}{% endwith %}
-        {% block content %}<p class="text-danger">Error: Content block missing.</p>{% endblock content %}
-    </main>
-    <footer class="mt-5 py-3 text-center text-muted bg-light"><div class="container"><p class="mb-0">© {{ now().year }} Help Desk</p></div></footer>
+
+    {# --- Main Content Area with Sidebar --- #}
+    <div class="container-fluid"> {# Fluid container for layout #}
+        <div class="row">
+
+            {# --- Sidebar Column --- #}
+            <aside class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse" id="sidebarMenu"> {# Adjusted cols #}
+                <div class="position-sticky pt-3">
+                     <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                        <span>Dashboard Links</span>
+                    </h6>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                             <a class="nav-link {% if request.endpoint == 'tickets.create_ticket' %}active{% endif %}" href="{{ url_for('tickets.create_ticket') }}">
+                                <i class="bi bi-plus-square me-1"></i> Submit Ticket
+                             </a>
+                         </li>
+                         <li class="nav-item">
+                             <a class="nav-link {% if request.endpoint.startswith('tickets.') and request.endpoint != 'tickets.create_ticket' %}active{% endif %}" href="{{ url_for('tickets.list_tickets') }}">
+                                 <i class="bi bi-ticket-detailed me-1"></i> My Tickets {# Changed icon #}
+                             </a>
+                         </li>
+                         {# Add Ticket Status link if you create that page #}
+                         <li class="nav-item">
+                            <a class="nav-link disabled" href="#"> {# Example disabled link #}
+                                <i class="bi bi-bar-chart-line me-1"></i> Ticket Status
+                            </a>
+                         </li>
+                         {% if current_user.role == 'agent' %}
+                         <li class="nav-item">
+                            <a class="nav-link {% if request.endpoint.startswith('admin.') %}active{% endif %}" href="{{ url_for('admin.view_users') }}">
+                                 <i class="bi bi-people me-1"></i> User Data
+                             </a>
+                         </li>
+                         {% endif %}
+                         <li class="nav-item mt-3 border-top pt-3"> {# Separator and logout #}
+                             <a class="nav-link" href="{{ url_for('auth.logout') }}">
+                                <i class="bi bi-box-arrow-left me-1"></i> Log Out
+                             </a>
+                         </li>
+                    </ul>
+                </div>
+            </aside>
+
+            {# --- Main Content Column --- #}
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4"> {# Adjusted cols #}
+                {# --- Flash Messages --- #}
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}{% for c, m in messages %}<div class="alert alert-{{ c }} alert-dismissible fade show" role="alert">{{ m }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>{% endfor %}{% endif %}
+                {% endwith %}
+
+                {# --- Page Content Block --- #}
+                {% block content %}
+                    <h1 class="h2">Dashboard</h1>
+                    <p>Default Content - Needs to be overridden.</p>
+                {% endblock content %}
+
+                 {# --- Footer (Moved inside main content area for layout) --- #}
+                <footer class="pt-4 my-md-5 pt-md-5 border-top text-center text-muted">
+                    © {{ now().year }} Help Desk
+                </footer>
+            </main>
+
+        </div> {# End .row #}
+    </div> {# End .container-fluid #}
+
+
+    <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 </body>
 </html>
