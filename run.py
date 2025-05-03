@@ -1,8 +1,12 @@
 # run.py
 from app import create_app
+import os
 
-app = create_app() # Uses default config or specify one
+app = create_app()
 
 if __name__ == '__main__':
-    # Use host='0.0.0.0' to make accessible on your network
-    app.run(debug=app.config.get('ENV') == 'development', host='0.0.0.0', port=5000)
+    # Get host/port from env or use defaults
+    host = os.environ.get('FLASK_RUN_HOST', '0.0.0.0')
+    port = int(os.environ.get('FLASK_RUN_PORT', 5000))
+    # Debug mode is set inside create_app based on FLASK_ENV
+    app.run(host=host, port=port)

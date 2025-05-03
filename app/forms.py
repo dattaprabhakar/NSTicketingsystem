@@ -15,10 +15,10 @@ class RegistrationForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Register')
-    def validate_username(self, username):
-        if User.find_by_username(username.data): raise ValidationError('Username taken.')
-    def validate_email(self, email):
-        if User.find_by_email(email.data): raise ValidationError('Email registered.')
+    def validate_username(self, field):
+        if User.find_by_username(field.data): raise ValidationError('Username taken.')
+    def validate_email(self, field):
+        if User.find_by_email(field.data): raise ValidationError('Email registered.')
 
 class TicketForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired(), Length(max=100)])
@@ -27,16 +27,9 @@ class TicketForm(FlaskForm):
     submit = SubmitField('Create Ticket')
 
 class CommentForm(FlaskForm):
-    text = TextAreaField('Add Comment', validators=[DataRequired()])
+    text = TextAreaField('Comment', validators=[DataRequired()])
     submit = SubmitField('Post Comment')
 
-# UPDATED UpdateStatusForm
 class UpdateStatusForm(FlaskForm):
-     status = SelectField('Status', choices=[
-        ('Open', 'Open'),
-        ('In Progress', 'In Progress'),
-        ('Resolved', 'Resolved'),
-        ('Closed', 'Closed'),
-        ('Reopened', 'Reopened') # <-- Added Reopened
-        ], validators=[DataRequired()])
-     submit = SubmitField('Update Status')
+    status = SelectField('Status', choices=[('Open', 'Open'), ('In Progress', 'In Progress'), ('Resolved', 'Resolved'), ('Closed', 'Closed'), ('Reopened', 'Reopened')], validators=[DataRequired()])
+    submit = SubmitField('Update Status')

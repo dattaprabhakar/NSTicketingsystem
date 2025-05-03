@@ -11,6 +11,5 @@ bcrypt = Bcrypt()
 csrf = CSRFProtect()
 mail = Mail()
 
-# Configure Flask-Login
-login_manager.login_view = 'auth.login' # The blueprint name and function name for the login route
-login_manager.login_message_category = 'info' # Flash message category
+login_manager.login_view = 'auth.login'
+login_manager.login_message_category = 'info'
