@@ -9,46 +9,34 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Login')
 
-# Example Registration Form (add route if needed)
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=4, max=25)])
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Register')
-
     def validate_username(self, username):
-        user = User.find_by_username(username.data)
-        if user:
-            raise ValidationError('Username is already taken. Please choose a different one.')
-
+        if User.find_by_username(username.data): raise ValidationError('Username taken.')
     def validate_email(self, email):
-        user = User.find_by_email(email.data)
-        if user:
-            raise ValidationError('Email is already registered. Please use a different one.')
+        if User.find_by_email(email.data): raise ValidationError('Email registered.')
 
 class TicketForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired(), Length(max=100)])
     description = TextAreaField('Description', validators=[DataRequired()])
-    priority = SelectField('Priority', choices=[
-        ('Low', 'Low'),
-        ('Medium', 'Medium'),
-        ('High', 'High'),
-        ('Critical', 'Critical')
-        ], validators=[DataRequired()])
+    priority = SelectField('Priority', choices=[('Low', 'Low'), ('Medium', 'Medium'), ('High', 'High'), ('Critical', 'Critical')], validators=[DataRequired()])
     submit = SubmitField('Create Ticket')
 
 class CommentForm(FlaskForm):
     text = TextAreaField('Add Comment', validators=[DataRequired()])
     submit = SubmitField('Post Comment')
 
+# UPDATED UpdateStatusForm
 class UpdateStatusForm(FlaskForm):
      status = SelectField('Status', choices=[
         ('Open', 'Open'),
         ('In Progress', 'In Progress'),
         ('Resolved', 'Resolved'),
-        ('Closed', 'Closed')
+        ('Closed', 'Closed'),
+        ('Reopened', 'Reopened') # <-- Added Reopened
         ], validators=[DataRequired()])
      submit = SubmitField('Update Status')
-
-# You might add an AssignAgentForm later

@@ -1,110 +1,12 @@
 {% extends "base.html" %}
-
 {% block content %}
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h1>{{ title }}</h1>
-        <a href="{{ url_for('tickets.list_tickets') }}" class="btn btn-secondary">Back to List</a>
-    </div>
+    <div class="d-flex justify-content-between align-items-center mb-3"> <h1>{{ title }}</h1> <a href="{{ url_for('tickets.list_tickets') }}" class="btn btn-secondary">Back to List</a> </div>
     <hr>
-
     <div class="card mb-4">
-        <div class="card-header d-flex justify-content-between">
-            <span>Details</span>
-             <span class="badge
-                {% if ticket.status == 'Open' %}bg-success
-                {% elif ticket.status == 'In Progress' %}bg-warning text-dark
-                {% elif ticket.status == 'Resolved' %}bg-info text-dark
-                {% elif ticket.status == 'Closed' %}bg-secondary
-                {% else %}bg-light text-dark{% endif %}">
-                Status: {{ ticket.status }}
-            </span>
-        </div>
-        <div class="card-body">
-             <p><strong>Priority:</strong>
-                 <span class="badge
-                    {% if ticket.priority == 'Critical' %}bg-danger
-                    {% elif ticket.priority == 'High' %}bg-warning text-dark
-                    {% elif ticket.priority == 'Medium' %}bg-info text-dark
-                    {% else %}bg-secondary{% endif %}">
-                    {{ ticket.priority }}
-                </span>
-             </p>
-            <p><strong>Created By:</strong> {{ ticket.creator_username }}</p>
-             <p><strong>Assigned To:</strong> {{ ticket.assignee_username }}</p>
-             <p><strong>Created At:</strong> {{ ticket.created_at.strftime('%Y-%m-%d %H:%M:%S UTC') if ticket.created_at else 'N/A' }}</p>
-            <p><strong>Last Updated:</strong> {{ ticket.updated_at.strftime('%Y-%m-%d %H:%M:%S UTC') if ticket.updated_at else 'N/A' }}</p>
-            <hr>
-            <p><strong>Description:</strong></p>
-            <p>{{ ticket.description | nl2br }}</p> <!-- nl2br filter preserves newlines -->
-        </div>
-    </div>
-
-    {% if current_user.role == 'agent' %}
-    <div class="card mb-4">
-        <div class="card-header">Update Status (Agent)</div>
-        <div class="card-body">
-             <form method="POST" action="{{ url_for('tickets.view_ticket', ticket_id=ticket._id) }}">
-                {{ status_form.hidden_tag() }}
-                 <div class="row g-3 align-items-center">
-                     <div class="col-auto">
-                         {{ status_form.status.label(class="col-form-label") }}
-                     </div>
-                     <div class="col-auto">
-                         {{ status_form.status(class="form-select" + (" is-invalid" if status_form.status.errors else "")) }}
-                         {% if status_form.status.errors %}
-                            <div class="invalid-feedback">
-                                {% for error in status_form.status.errors %}{{ error }}{% endfor %}
-                            </div>
-                         {% endif %}
-                     </div>
-                     <div class="col-auto">
-                         <!-- IMPORTANT: Added name attribute to submit button -->
-                         {{ status_form.submit(class="btn btn-warning", name="submit_status") }}
-                     </div>
-                 </div>
-            </form>
-            <!-- Add Agent Assignment Form Here Later -->
-        </div>
-    </div>
-    {% endif %}
-
-
-    <div class="card mb-4">
-        <div class="card-header">Comments</div>
-        <div class="card-body">
-            {% if ticket.comments %}
-                {% for comment in ticket.comments|sort(attribute='timestamp') %}
-                    <div class="mb-3 border-bottom pb-2">
-                        <p class="mb-1">{{ comment.text | nl2br }}</p>
-                        <small class="text-muted">
-                            By: {{ comment.author_username }} on {{ comment.timestamp.strftime('%Y-%m-%d %H:%M') if comment.timestamp else 'N/A' }}
-                        </small>
-                    </div>
-                {% endfor %}
-            {% else %}
-                <p>No comments yet.</p>
-            {% endif %}
-        </div>
-    </div>
-
-    <div class="card mb-4">
-        <div class="card-header">Add Comment</div>
-        <div class="card-body">
-             <form method="POST" action="{{ url_for('tickets.view_ticket', ticket_id=ticket._id) }}">
-                {{ comment_form.hidden_tag() }}
-                 <div class="mb-3">
-                    {{ comment_form.text(class="form-control" + (" is-invalid" if comment_form.text.errors else ""), rows="3") }}
-                    {% if comment_form.text.errors %}
-                        <div class="invalid-feedback">
-                            {% for error in comment_form.text.errors %}{{ error }}{% endfor %}
-                        </div>
-                    {% endif %}
-                 </div>
-                  <!-- IMPORTANT: Added name attribute to submit button -->
-                 {{ comment_form.submit(class="btn btn-success", name="submit_comment") }}
-            </form>
-        </div>
-    </div>
-
-
+        {# --- UPDATED STATUS BADGE LOGIC --- #}
+        <div class="card-header d-flex justify-content-between"><span>Details</span><span class="badge {% if ticket.status == 'Open' %}bg-success{% elif ticket.status == 'In Progress' %}bg-warning text-dark{% elif ticket.status == 'Reopened' %}bg-warning text-dark{# Reusing warning #}{% elif ticket.status == 'Resolved' %}bg-info text-dark{% elif ticket.status == 'Closed' %}bg-secondary{% else %}bg-light text-dark{% endif %}">Status: {{ ticket.status }}</span></div>
+        <div class="card-body"><p><strong>Priority:</strong><span class="badge {% if ticket.priority == 'Critical' %}bg-danger{% elif ticket.priority == 'High' %}bg-warning text-dark{% elif ticket.priority == 'Medium' %}bg-info text-dark{% else %}bg-secondary{% endif %}">{{ ticket.priority }}</span></p><p><strong>Created By:</strong> {{ ticket.creator_username }}</p><p><strong>Assigned To:</strong> {{ ticket.assignee_username }}</p><p><strong>Created At:</strong> {{ ticket.created_at.strftime('%Y-%m-%d %H:%M:%S UTC') if ticket.created_at else 'N/A' }}</p><p><strong>Last Updated:</strong> {{ ticket.updated_at.strftime('%Y-%m-%d %H:%M:%S UTC') if ticket.updated_at else 'N/A' }}</p><hr><p><strong>Description:</strong></p><p>{{ ticket.description | nl2br }}</p></div> </div>
+    {% if current_user.role == 'agent' %} <div class="card mb-4"> <div class="card-header">Update Status (Agent)</div> <div class="card-body"><form method="POST" action="{{ url_for('tickets.view_ticket', ticket_id=ticket._id) }}">{{ status_form.hidden_tag() }}<div class="row g-3 align-items-center"><div class="col-auto">{{ status_form.status.label(class="col-form-label") }}</div><div class="col-auto">{{ status_form.status(class="form-select" + (" is-invalid" if status_form.status.errors else "")) }}{% if status_form.status.errors %}<div class="invalid-feedback">{% for e in status_form.status.errors %}{{ e }}{% endfor %}</div>{% endif %}</div><div class="col-auto">{{ status_form.submit(class="btn btn-warning", name="submit_status") }}</div></div></form></div> </div> {% endif %}
+    <div class="card mb-4"> <div class="card-header">Comments</div> <div class="card-body"> {% if ticket.comments %}{% for c in ticket.comments|sort(attribute='timestamp') %}<div class="mb-3 border-bottom pb-2"><p class="mb-1">{{ c.text | nl2br }}</p><small class="text-muted">By: {{ c.author_username }} on {{ c.timestamp.strftime('%Y-%m-%d %H:%M') if c.timestamp else 'N/A' }}</small></div>{% endfor %}{% else %}<p>No comments yet.</p>{% endif %}</div> </div>
+    <div class="card mb-4"> <div class="card-header">Add Comment</div> <div class="card-body"><form method="POST" action="{{ url_for('tickets.view_ticket', ticket_id=ticket._id) }}">{{ comment_form.hidden_tag() }}<div class="mb-3">{{ comment_form.text(class="form-control" + (" is-invalid" if comment_form.text.errors else ""), rows="3") }}{% if comment_form.text.errors %}<div class="invalid-feedback">{% for e in comment_form.text.errors %}{{ e }}{% endfor %}</div>{% endif %}</div>{{ comment_form.submit(class="btn btn-success", name="submit_comment") }}</form></div> </div>
 {% endblock %}
