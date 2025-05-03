@@ -43,10 +43,11 @@
 
     {# --- Main Content Area Container --- #}
     <div class="container-fluid">
-        {% if current_user.is_authenticated %}
-            {# --- LOGGED-IN LAYOUT: Sidebar + Main --- #}
-            <div class="row">
-                <aside class="col-md-3 col-lg-2 d-md-block sidebar collapse" id="sidebarMenu">
+        <div class="row">
+
+             {# --- Conditionally Render Sidebar --- #}
+             {% if current_user.is_authenticated %}
+                 <aside class="col-md-3 col-lg-2 d-md-block sidebar collapse" id="sidebarMenu">
                     <div class="position-sticky">
                         <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-2 mb-1 text-muted"><span>Dashboard Links</span></h6>
                         <ul class="nav flex-column">
@@ -58,27 +59,36 @@
                         </ul>
                     </div>
                 </aside>
-                <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                    {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}{% for c, m in messages %}<div class="alert alert-{{ c }} alert-dismissible fade show" role="alert">{{ m }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>{% endfor %}{% endif %}{% endwith %}
-                    {# === Main Content Block (Defined ONCE here) === #}
-                    {% block content %}{% endblock content %}
-                    <footer class="pt-4 my-md-5 pt-md-5 border-top text-center text-muted"><p>© {{ now().year }} Help Desk</p></footer>
-                </main>
-            </div>
-        {% else %}
-             {# --- LOGGED-OUT LAYOUT: Full Width Centered Content --- #}
-             <div class="row justify-content-center">
-                <div class="col-lg-8 col-md-10">
-                    <div style="padding-top: 1rem;">
-                         {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}{% for c, m in messages %}<div class="alert alert-{{ c }} alert-dismissible fade show" role="alert">{{ m }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>{% endfor %}{% endif %}{% endwith %}
-                         {# === Main Content Block (Child templates will fill this SAME block) === #}
-                         {% block content %}{% endblock content %}
-                         <footer class="pt-4 my-md-5 pt-md-5 border-top text-center text-muted"><p>© {{ now().year }} Help Desk</p></footer>
-                    </div>
-                </div>
-             </div>
-        {% endif %}
-    </div>
+             {% endif %} {# End conditional sidebar rendering #}
+
+
+             {# --- Main Content Area (Column class depends on login state) --- #}
+             <main class="{% if current_user.is_authenticated %}col-md-9 ms-sm-auto col-lg-10{% else %}col-lg-8 col-md-10 mx-auto{% endif %} px-md-4">
+
+                {# --- Flash Messages --- #}
+                <div style="padding-top: 1rem;"> {# Add padding here consistently #}
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}{% for c, m in messages %}
+                        <div class="alert alert-{{ c }} alert-dismissible fade show" role="alert">{{ m }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                        {% endfor %}{% endif %}
+                    {% endwith %}
+
+                    {# === THE **SINGLE** CONTENT BLOCK DEFINITION === #}
+                    {% block content %}
+                        {# Fallback content if child doesn't define it #}
+                        <p class="text-danger">Error: Page content not defined.</p>
+                    {% endblock content %}
+
+                    {# --- Footer --- #}
+                    <footer class="pt-4 my-md-5 pt-md-5 border-top text-center text-muted">
+                        <p>© {{ now().year }} Help Desk</p>
+                    </footer>
+                </div>{# End inner padding div #}
+
+             </main> {# End Main Content Area #}
+
+        </div> {# End .row #}
+    </div> {# End .container-fluid #}
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 </body>
