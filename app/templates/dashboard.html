@@ -5,14 +5,64 @@
     {# <h1 class="h2 border-bottom pb-2 mb-3">Dashboard Overview</h1> #}
 
     {# Added dashboard-widget class to row for specific styling #}
-    <div class="row mt-4 dashboard-widget">
+    <div class="row mt-4 dashboard-widget justify-content-center"> {# Center the widgets if fewer than max #}
 
-        <div class="col-lg-3 col-md-6 mb-4"> <div class="card text-center h-100"><div class="card-body d-flex flex-column justify-content-center"><i class="bi bi-circle fs-1 text-muted mb-2"></i><h6 class="card-title text-success fw-bold">Open ({{ stats.by_status['Open'] if stats and stats.by_status and 'Open' in stats.by_status else 0 }})</h6></div></div></div>
-        <div class="col-lg-3 col-md-6 mb-4"> <div class="card text-center h-100"><div class="card-body d-flex flex-column justify-content-center"><i class="bi bi-circle fs-1 text-muted mb-2"></i><h6 class="card-title text-danger fw-bold">Closed ({{ stats.by_status['Closed'] if stats and stats.by_status and 'Closed' in stats.by_status else 0 }})</h6></div></div></div>
-        <div class="col-lg-3 col-md-6 mb-4"> <div class="card text-center h-100"><div class="card-body d-flex flex-column justify-content-center"><i class="bi bi-circle fs-1 text-muted mb-2"></i><h6 class="card-title text-warning fw-bold">Answered ({{ stats.by_status['In Progress'] if stats and stats.by_status and 'In Progress' in stats.by_status else 0 }})</h6></div></div></div>
-        <div class="col-lg-3 col-md-6 mb-4"> <div class="card text-center h-100"><div class="card-body d-flex flex-column justify-content-center"><i class="bi bi-circle fs-1 text-muted mb-2"></i><h6 class="card-title text-primary fw-bold">All Tickets ({{ stats.total_tickets if stats and 'total_tickets' in stats else 0 }})</h6></div></div></div>
+        {# Widget 1: Open Tickets #}
+        <div class="col-xl col-lg-4 col-md-6 mb-4"> {# Use col-xl for finer control on large screens #}
+            <div class="card text-center shadow-sm h-100">
+                 <div class="card-body d-flex flex-column justify-content-center">
+                    <i class="bi bi-circle fs-1 text-muted mb-2"></i>
+                    <h6 class="card-title text-success fw-bold">Open ({{ stats.by_status['Open'] if stats and stats.by_status and 'Open' in stats.by_status else 0 }})</h6>
+                </div>
+            </div>
+        </div>
 
-    </div>
-    {# Add other dashboard elements here if needed #}
+        {# Widget 2: In Progress Tickets #}
+        <div class="col-xl col-lg-4 col-md-6 mb-4">
+            <div class="card text-center shadow-sm h-100">
+                <div class="card-body d-flex flex-column justify-content-center">
+                    <i class="bi bi-circle fs-1 text-muted mb-2"></i>
+                    {# Using text-warning color for In Progress #}
+                    <h6 class="card-title text-warning fw-bold">In Progress ({{ stats.by_status['In Progress'] if stats and stats.by_status and 'In Progress' in stats.by_status else 0 }})</h6>
+                </div>
+            </div>
+        </div>
+
+         {# Widget 3: Resolved Tickets #}
+        <div class="col-xl col-lg-4 col-md-6 mb-4">
+            <div class="card text-center shadow-sm h-100">
+                <div class="card-body d-flex flex-column justify-content-center">
+                    <i class="bi bi-circle fs-1 text-muted mb-2"></i>
+                     {# Using text-info color for Resolved #}
+                    <h6 class="card-title text-info fw-bold">Resolved ({{ stats.by_status['Resolved'] if stats and stats.by_status and 'Resolved' in stats.by_status else 0 }})</h6>
+                </div>
+            </div>
+        </div>
+
+        {# Widget 4: Closed Tickets #}
+        <div class="col-xl col-lg-4 col-md-6 mb-4">
+            <div class="card text-center shadow-sm h-100">
+                 <div class="card-body d-flex flex-column justify-content-center">
+                     <i class="bi bi-circle fs-1 text-muted mb-2"></i>
+                      {# Using text-danger or text-muted color for Closed #}
+                     <h6 class="card-title text-danger fw-bold">Closed ({{ stats.by_status['Closed'] if stats and stats.by_status and 'Closed' in stats.by_status else 0 }})</h6>
+                 </div>
+            </div>
+        </div>
+
+        {# Widget 5: All Tickets (Optional, but often useful) #}
+        <div class="col-xl col-lg-4 col-md-6 mb-4">
+            <div class="card text-center shadow-sm h-100">
+                <div class="card-body d-flex flex-column justify-content-center">
+                    <i class="bi bi-circle fs-1 text-muted mb-2"></i>
+                     {# Using text-primary color for All Tickets #}
+                    <h6 class="card-title text-primary fw-bold">All Tickets ({{ stats.total_tickets if stats and 'total_tickets' in stats else 0 }})</h6>
+                </div>
+            </div>
+        </div>
+
+    </div> {# End row #}
+
+    {# You might add other dashboard elements here later, like recent tickets table #}
 
 {% endblock content %}
