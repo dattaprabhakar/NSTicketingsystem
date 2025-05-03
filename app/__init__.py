@@ -1,61 +1,75 @@
 # app/__init__.py
 import os
-from flask import Flask, render_template
-from dotenv import load_dotenv
-from .extensions import mongo, login_manager, bcrypt, csrf, mail
 import logging
+from flask import Flask, render_template
+from dotenv import load_dotenv # Import load_dotenv
 
-# Load environment variables from .env file
-load_dotenv()
+# --- IMPORTANT: Load .env variables VERY EARLY ---
+# Calculate the path to the .env file in the project root
+# Assumes __init__.py is in 'app/' and .env is in the parent directory
+dotenv_path = os.path.join(os.path.dirname(__file__), '..', '.env')
+# Load the .env file
+dotenv_loaded = load_dotenv(dotenv_path=dotenv_path, verbose=True) # Add verbose=True for debug info
 
-def create_app(config_object='config.DevelopmentConfig'): # Default config class name
+# --- Import extensions AFTER load_dotenv (if they rely on env vars) ---
+from .extensions import mongo, login_manager, bcrypt, csrf, mail
+
+
+# --- Debugging Output ---
+print(f"DEBUG: dotenv loaded? {dotenv_loaded}") # Check if load_dotenv reported success
+print(f"DEBUG: FLASK_ENV from os.environ after load_dotenv: {os.environ.get('FLASK_ENV')}")
+print(f"DEBUG: MONGO_URI from os.environ after load_dotenv: {os.environ.get('MONGO_URI')}")
+# --- End Debugging Output ---
+
+
+def create_app(config_object='config.DevelopmentConfig'):
     """Application Factory Pattern"""
     app = Flask(__name__, instance_relative_config=True)
 
-    # Load configuration
-    # Option 1: Load from .env using os.environ.get
-    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+    # --- Load configuration ---
+
+    # Explicitly get FLASK_ENV from environment (set by .env or manually)
+    # Default to 'production' if not found
+    flask_env = os.environ.get('FLASK_ENV', 'production')
+    app.config['ENV'] = flask_env
+    # Set DEBUG based on ENV
+    app.config['DEBUG'] = flask_env == 'development'
+
+    # --- Debugging ---
+    print(f"DEBUG: app.config['ENV'] set to: {app.config.get('ENV')}")
+    print(f"DEBUG: app.config['DEBUG'] set to: {app.config.get('DEBUG')}")
+    # --- End Debugging ---
+
+
+    # Load other configurations from os.environ (which should have .env vars now)
+    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'default-secret-key-please-change') # Add a default
     app.config['MONGO_URI'] = os.environ.get('MONGO_URI')
     app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER')
-    app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT', 587)) # Default port
+    app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT', 587))
     app.config['MAIL_USE_TLS'] = os.environ.get('MAIL_USE_TLS', 'True').lower() == 'true'
     app.config['MAIL_USE_SSL'] = os.environ.get('MAIL_USE_SSL', 'False').lower() == 'true'
     app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
     app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
-    app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER', 'noreply@example.com')
-    # Ensure MAIL_DEFAULT_SENDER is parsed correctly if it's a tuple string in .env
-    # Example: MAIL_DEFAULT_SENDER="('Help Desk', 'help@example.com')"
-    # You might need eval() for this, but be CAREFUL with eval. Better to set separately.
-    # Or define MAIL_SENDER_NAME and MAIL_SENDER_EMAIL in .env
-    default_sender_tuple = ('Help Desk App', app.config['MAIL_USERNAME']) # Safer default
-    try:
-        # Attempt to parse if it looks like a tuple string (use carefully!)
-        sender_config = os.environ.get('MAIL_DEFAULT_SENDER')
-        if sender_config and sender_config.startswith('(') and sender_config.endswith(')'):
-             import ast
-             parsed_sender = ast.literal_eval(sender_config)
-             if isinstance(parsed_sender, tuple) and len(parsed_sender) == 2:
-                 default_sender_tuple = parsed_sender
-        app.config['MAIL_DEFAULT_SENDER'] = default_sender_tuple
-    except Exception:
-        app.config['MAIL_DEFAULT_SENDER'] = default_sender_tuple # Fallback
+    app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER', ('Default Sender', 'noreply@example.com')) # Default tuple
+    # (Add your logic here to parse MAIL_DEFAULT_SENDER if it's a string tuple in .env)
 
-    # Option 2: Load from instance/config.py (less common with .env)
-    # app.config.from_pyfile('config.py', silent=True) # Loads from instance/config.py
 
-    # Option 3: Load directly from a config class (if you define them)
-    # app.config.from_object(config_object)
-
-    # Configure Logging
+    # --- Configure Logging ---
+    # This check should now work because app.config['ENV'] was explicitly set above
+    print(f"DEBUG: Checking app.config['ENV'] for logging setup: {app.config.get('ENV')}") # Debug before the check
     if app.config['ENV'] == 'development':
-        logging.basicConfig(level=logging.INFO) # Log info in dev
+        logging.basicConfig(level=logging.INFO)
+        print("DEBUG: Logging level set to INFO")
     else:
-         logging.basicConfig(level=logging.WARNING) # Log warnings/errors in prod
+        logging.basicConfig(level=logging.WARNING)
+        print("DEBUG: Logging level set to WARNING")
 
     app.logger.info("Flask App Configuration Loaded:")
-    app.logger.info(f"SECRET_KEY: {'Set' if app.config.get('SECRET_KEY') else 'Not Set'}")
+    app.logger.info(f"SECRET_KEY: {'Set' if app.config.get('SECRET_KEY') != 'default-secret-key-please-change' else 'Using Default (Not Set in Env)'}")
     app.logger.info(f"MONGO_URI: {app.config.get('MONGO_URI')}")
     app.logger.info(f"MAIL_SERVER: {app.config.get('MAIL_SERVER')}")
+    app.logger.info(f"Flask App Environment (ENV): {app.config['ENV']}")
+    app.logger.info(f"Flask App Debug Mode: {app.config['DEBUG']}")
 
 
     # Initialize extensions
@@ -73,16 +87,14 @@ def create_app(config_object='config.DevelopmentConfig'): # Default config class
     app.register_blueprint(main_bp)
     app.register_blueprint(tickets_bp)
 
-    # --- Error Handlers ---
+    # Error Handlers
     @app.errorhandler(404)
     def not_found_error(error):
         return render_template('errors/404.html'), 404
 
     @app.errorhandler(500)
     def internal_error(error):
-        # Log the error here
         app.logger.error(f"Server Error: {error}", exc_info=True)
-        # You might want to rollback db session if using SQL
         return render_template('errors/500.html'), 500
 
     app.logger.info("Help Desk App Initialized")
