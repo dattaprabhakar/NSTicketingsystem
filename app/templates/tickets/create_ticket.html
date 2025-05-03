@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {# --- START OF CONTENT BLOCK --- #}
+    <h1 class="mb-4">{{ title }}</h1> {# Added margin #}
+    <hr>
+    <form method="POST" action="{{ url_for('tickets.create_ticket') }}">
+        {{ form.hidden_tag() }} {# CSRF token #}
+
+        {# Title Field #}
+        <div class="mb-3">
+            {{ form.title.label(class="form-label") }}
+            {{ form.title(class="form-control" + (" is-invalid" if form.title.errors else ""), placeholder="Enter a short, descriptive title") }} {# Updated placeholder #}
+            {% if form.title.errors %}
+                <div class="invalid-feedback">
+                    {% for error in form.title.errors %}{{ error }}{% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        {# Description Field #}
+        <div class="mb-3">
+            {{ form.description.label(class="form-label") }}
+            {{ form.description(class="form-control" + (" is-invalid" if form.description.errors else ""), rows=6, placeholder="Describe the issue in detail. Include steps to reproduce if applicable.") }} {# Updated placeholder and rows #}
+             {% if form.description.errors %}
+                <div class="invalid-feedback">
+                    {% for error in form.description.errors %}{{ error }}{% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        {# Priority Field #}
+        <div class="mb-3">
+             {{ form.priority.label(class="form-label") }}
+             {{ form.priority(class="form-select" + (" is-invalid" if form.priority.errors else "")) }} {# Use form-select for <select> #}
+              {% if form.priority.errors %}
+                <div class="invalid-feedback">
+                    {% for error in form.priority.errors %}{{ error }}{% endfor %}
+                </div>
+             {% endif %}
+        </div>
+
+        {# Submit Button #}
+        {{ form.submit(class="btn btn-primary") }}
+         <a href="{{ url_for('tickets.list_tickets') }}" class="btn btn-secondary">Cancel</a>
+
+    </form>
+    {# --- END OF CONTENT BLOCK --- #}
+{% endblock content %}
